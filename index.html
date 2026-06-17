@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Autowelt Michael – Erstklassige Gebrauchtwagen in Beckdorf</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['Playfair Display', 'Georgia', 'serif'],
+            sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            cream:   '#FDFBF7',
+            warm:    '#F5F0E8',
+            espresso:'#1A1109',
+            muted:   '#8B7355',
+            sage:    '#6B7A5E',
+          },
+          transitionTimingFunction: {
+            spring: 'cubic-bezier(0.32,0.72,0,1)',
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    /* Film grain — fixed pseudo-element, never on scroll container */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 256px 256px;
+      opacity: 0.025;
+    }
+
+    /* Scroll-reveal initial state — GPU-safe (transform + opacity only) */
+    .reveal {
+      opacity: 0;
+      transform: translateY(3rem);
+      filter: blur(6px);
+      transition:
+        opacity  0.9s cubic-bezier(0.32, 0.72, 0, 1),
+        transform 0.9s cubic-bezier(0.32, 0.72, 0, 1),
+        filter   0.9s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+    .reveal.d1 { transition-delay: 0.10s; }
+    .reveal.d2 { transition-delay: 0.22s; }
+    .reveal.d3 { transition-delay: 0.36s; }
+    .reveal.d4 { transition-delay: 0.50s; }
+
+    /* Mobile menu link stagger */
+    .mob-link {
+      opacity: 0;
+      transform: translateY(2rem);
+      transition:
+        opacity  0.55s cubic-bezier(0.32, 0.72, 0, 1),
+        transform 0.55s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    .menu-open .mob-link { opacity: 1; transform: translateY(0); }
+    .menu-open .mob-link:nth-child(1) { transition-delay: 0.08s; }
+    .menu-open .mob-link:nth-child(2) { transition-delay: 0.16s; }
+    .menu-open .mob-link:nth-child(3) { transition-delay: 0.24s; }
+    .menu-open .mob-link:nth-child(4) { transition-delay: 0.32s; }
+    .menu-open .mob-link:nth-child(5) { transition-delay: 0.40s; }
+
+    /* Hairline separator */
+    .hairline { border-color: rgba(26,17,9,0.10); }
+    .hairline-light { border-color: rgba(255,255,255,0.10); }
+  </style>
+</head>
+<body class="bg-cream font-sans text-espresso overflow-x-hidden">
+
+  <!-- ═══════════════════════════════════════════════
+       FLOATING ISLAND NAV
+  ═══════════════════════════════════════════════ -->
+  <header class="fixed top-0 inset-x-0 z-40 flex justify-center pt-5 px-4">
+    <nav class="flex items-center justify-between gap-6 w-full max-w-[680px]
+                px-5 py-2.5 rounded-full
+                bg-espresso/92 backdrop-blur-xl
+                border border-white/10
+                shadow-[0_8px_40px_rgba(0,0,0,0.25)]
+                transition-all duration-700 ease-spring">
+      <!-- Logo -->
+      <a href="#" class="font-serif text-cream text-[15px] font-bold tracking-tight shrink-0">
+        Autowelt Michael
+      </a>
+      <!-- Desktop links -->
+      <div class="hidden md:flex items-center gap-5 text-[13px] font-medium text-cream/60">
+        <a href="#fahrzeuge" class="hover:text-cream transition-colors duration-300">Fahrzeuge</a>
+        <a href="#ankauf"    class="hover:text-cream transition-colors duration-300">Ankauf</a>
+        <a href="#werkstatt" class="hover:text-cream transition-colors duration-300">Werkstatt</a>
+        <a href="#kontakt"   class="hover:text-cream transition-colors duration-300">Kontakt</a>
+      </div>
+      <!-- CTA + hamburger -->
+      <div class="flex items-center gap-3">
+        <a href="#kontakt"
+           class="hidden md:inline-flex items-center gap-2
+                  bg-cream text-espresso text-[13px] font-semibold
+                  pl-4 pr-1.5 py-1.5 rounded-full
+                  transition-all duration-500 ease-spring
+                  hover:bg-white active:scale-[0.97] group">
+          Kontakt
+          <span class="w-6 h-6 rounded-full bg-espresso/10 flex items-center justify-center
+                       transition-all duration-500 ease-spring
+                       group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:scale-110">
+            <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
+              <path d="M1.5 7.5L7.5 1.5M7.5 1.5H3M7.5 1.5V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </a>
+        <!-- Hamburger -->
+        <button id="hamburger" aria-label="Menü öffnen"
+                class="md:hidden w-8 h-8 flex flex-col items-center justify-center gap-[5px] shrink-0">
+          <span id="bar-top"    class="block w-[18px] h-px bg-cream origin-center transition-all duration-500 ease-spring"></span>
+          <span id="bar-bottom" class="block w-[18px] h-px bg-cream origin-center transition-all duration-500 ease-spring"></span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════
+       MOBILE OVERLAY MENU
+  ═══════════════════════════════════════════════ -->
+  <div id="mobile-overlay"
+       class="fixed inset-0 z-30 bg-espresso/97 backdrop-blur-3xl
+              flex flex-col items-center justify-center
+              opacity-0 pointer-events-none
+              transition-opacity duration-700 ease-spring">
+    <nav class="flex flex-col items-center gap-7 text-center">
+      <a href="#fahrzeuge" onclick="closeMenu()" class="mob-link font-serif text-cream text-5xl leading-none font-bold">Fahrzeuge</a>
+      <a href="#ankauf"    onclick="closeMenu()" class="mob-link font-serif text-cream text-5xl leading-none font-bold">Ankauf</a>
+      <a href="#werkstatt" onclick="closeMenu()" class="mob-link font-serif text-cream text-5xl leading-none font-bold">Werkstatt</a>
+      <a href="#kontakt"   onclick="closeMenu()" class="mob-link font-serif text-cream text-5xl leading-none font-bold">Kontakt</a>
+      <a href="tel:+4941676996339" onclick="closeMenu()"
+         class="mob-link mt-4 text-cream/40 text-base font-light tracking-[0.2em]">
+        +49 4167 699 6339
+      </a>
+    </nav>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       HERO
+  ═══════════════════════════════════════════════ -->
+  <section class="min-h-[100dvh] flex flex-col justify-end
+                  px-4 md:px-14 pb-16 md:pb-24 pt-36
+                  bg-warm relative overflow-hidden">
+    <!-- Ambient orb -->
+    <div class="absolute top-[20%] right-[10%] w-[500px] h-[500px] rounded-full
+                bg-muted/[0.07] blur-[140px] pointer-events-none"></div>
+
+    <!-- Eyebrow pill -->
+    <div class="reveal mb-7">
+      <span class="inline-flex items-center gap-2 rounded-full
+                   border border-espresso/20
+                   px-3 py-[5px]
+                   text-[10px] uppercase tracking-[0.22em] font-medium text-muted">
+        <span class="w-1 h-1 rounded-full bg-sage"></span>
+        Seit 2005 · Beckdorf bei Hamburg
+      </span>
+    </div>
+
+    <!-- Headline -->
+    <h1 class="reveal d1 font-serif leading-[0.92] tracking-tight
+               text-[clamp(3.2rem,9vw,9rem)] font-black text-espresso max-w-5xl">
+      Erstklassige<br/>
+      <em class="font-normal italic text-muted">Fahrzeuge,</em><br/>
+      fair &amp; direkt.
+    </h1>
+
+    <!-- Sub + CTA row -->
+    <div class="reveal d2 mt-10 flex flex-col md:flex-row items-start md:items-end gap-6 md:gap-14">
+      <p class="text-muted text-lg font-light leading-relaxed max-w-[320px]">
+        Geprüfte Gebrauchtwagen, transparenter Ankauf und professionelle KFZ-Werkstatt – alles aus einer Hand.
+      </p>
+      <div class="flex items-center gap-3 flex-wrap">
+        <!-- Primary CTA — button-in-button pattern -->
+        <a href="#fahrzeuge"
+           class="group inline-flex items-center gap-2
+                  bg-espresso text-cream text-[13px] font-semibold
+                  pl-5 pr-1.5 py-1.5 rounded-full
+                  transition-all duration-500 ease-spring
+                  hover:bg-espresso/85 active:scale-[0.97]">
+          Fahrzeuge ansehen
+          <span class="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center
+                       transition-all duration-500 ease-spring
+                       group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:scale-110">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <path d="M2 8L8 2M8 2H3M8 2V7" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </a>
+        <!-- Ghost CTA -->
+        <a href="tel:+4941676996339"
+           class="inline-flex items-center gap-2 border hairline
+                  text-espresso text-[13px] font-medium
+                  px-5 py-2.5 rounded-full
+                  transition-all duration-500 ease-spring
+                  hover:border-espresso/40 active:scale-[0.97]">
+          Jetzt anrufen
+        </a>
+      </div>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="reveal d3 mt-16 md:mt-20 flex gap-10 md:gap-16">
+      <div>
+        <div class="font-serif text-[2.6rem] font-black leading-none text-espresso">20+</div>
+        <div class="text-[11px] text-muted tracking-wide mt-1 font-light">Jahre Erfahrung</div>
+      </div>
+      <div class="w-px self-stretch bg-espresso/10"></div>
+      <div>
+        <div class="font-serif text-[2.6rem] font-black leading-none text-espresso">500+</div>
+        <div class="text-[11px] text-muted tracking-wide mt-1 font-light">Zufriedene Kunden</div>
+      </div>
+      <div class="w-px self-stretch bg-espresso/10"></div>
+      <div>
+        <div class="font-serif text-[2.6rem] font-black leading-none text-espresso">100%</div>
+        <div class="text-[11px] text-muted tracking-wide mt-1 font-light">Geprüfte Fahrzeuge</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       SERVICES — ASYMMETRICAL BENTO GRID
+  ═══════════════════════════════════════════════ -->
+  <section id="leistungen" class="py-32 md:py-40 px-4 md:px-14 bg-cream">
+    <div class="reveal mb-4">
+      <span class="inline-flex items-center gap-2 rounded-full border hairline
+                   px-3 py-[5px] text-[10px] uppercase tracking-[0.22em] font-medium text-muted">
+        Unsere Leistungen
+      </span>
+    </div>
+    <h2 class="reveal d1 font-serif text-[clamp(2.4rem,5vw,5rem)] font-black
+               leading-[1.0] tracking-tight mb-14 max-w-2xl">
+      Alles, was Ihr<br/><em class="font-normal italic text-muted">Fahrzeug braucht.</em>
+    </h2>
+
+    <!-- Bento -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+
+      <!-- Hero card: Gebrauchtwagen (col 7, row 2) -->
+      <div class="reveal md:col-span-7 row-span-2">
+        <!-- Double-bezel outer shell -->
+        <div class="p-2 rounded-[2rem] bg-espresso/[0.04] border border-espresso/10 h-full">
+          <!-- Inner core -->
+          <div class="rounded-[calc(2rem-0.5rem)] bg-espresso h-full min-h-[400px] md:min-h-[500px]
+                      p-8 md:p-10 flex flex-col justify-between relative overflow-hidden
+                      shadow-[inset_0_1px_1px_rgba(255,255,255,0.07)]">
+            <!-- Ambient glow -->
+            <div class="absolute -bottom-20 -right-20 w-72 h-72 rounded-full bg-muted/15 blur-[80px] pointer-events-none"></div>
+            <div>
+              <span class="inline-flex rounded-full border border-white/15
+                           px-3 py-[5px] text-[10px] uppercase tracking-[0.22em] font-medium text-cream/40 mb-6">
+                Fahrzeugverkauf
+              </span>
+              <h3 class="font-serif text-cream text-[clamp(2rem,3.5vw,3rem)] font-black leading-[1.05]">
+                Geprüfte<br/><em class="font-normal italic text-cream/55">Gebrauchtwagen</em>
+              </h3>
+            </div>
+            <div>
+              <p class="text-cream/45 text-sm font-light leading-relaxed mb-7 max-w-[320px]">
+                Jedes Fahrzeug wird sorgfältig geprüft und zu fairen Konditionen angeboten. VW, Audi, Skoda und viele weitere Marken.
+              </p>
+              <a href="#fahrzeuge"
+                 class="group inline-flex items-center gap-2
+                        bg-cream text-espresso text-[13px] font-semibold
+                        pl-5 pr-1.5 py-1.5 rounded-full
+                        transition-all duration-500 ease-spring
+                        hover:bg-white active:scale-[0.97]">
+                Fahrzeuge entdecken
+                <span class="w-7 h-7 rounded-full bg-espresso/10 flex items-center justify-center
+                             transition-all duration-500 ease-spring
+                             group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:scale-110">
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                    <path d="M2 8L8 2M8 2H3M8 2V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ankauf card -->
+      <div id="ankauf" class="reveal d1 md:col-span-5">
+        <div class="p-2 rounded-[2rem] bg-espresso/[0.04] border border-espresso/10 h-full">
+          <div class="rounded-[calc(2rem-0.5rem)] bg-warm h-full min-h-[235px]
+                      p-7 flex flex-col justify-between
+                      shadow-[inset_0_1px_1px_rgba(255,255,255,0.6)]">
+            <div>
+              <span class="inline-flex rounded-full border border-espresso/15
+                           px-3 py-[5px] text-[10px] uppercase tracking-[0.22em] font-medium text-muted mb-5">
+                Fahrzeugankauf
+              </span>
+              <h3 class="font-serif text-espresso text-2xl font-black leading-tight">
+                Ihr Auto,<br/><em class="font-normal italic text-muted">fair bewertet.</em>
+              </h3>
+            </div>
+            <p class="text-muted text-sm font-light leading-relaxed">
+              Transparenter Ankaufsprozess, faire Bewertung, sofortige Auszahlung.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Werkstatt card -->
+      <div id="werkstatt" class="reveal d2 md:col-span-5">
+        <div class="p-2 rounded-[2rem] bg-sage/[0.08] border border-sage/20 h-full">
+          <div class="rounded-[calc(2rem-0.5rem)] bg-sage/10 h-full min-h-[235px]
+                      p-7 flex flex-col justify-between
+                      shadow-[inset_0_1px_1px_rgba(255,255,255,0.3)]">
+            <div>
+              <span class="inline-flex rounded-full border border-sage/30
+                           px-3 py-[5px] text-[10px] uppercase tracking-[0.22em] font-medium text-sage mb-5">
+                KFZ-Werkstatt
+              </span>
+              <h3 class="font-serif text-espresso text-2xl font-black leading-tight">
+                Meisterbetrieb<br/><em class="font-normal italic text-muted">mit Expertise.</em>
+              </h3>
+            </div>
+            <p class="text-muted text-sm font-light leading-relaxed">
+              HU/AU, Inspektionen, Reparaturen. Modernste Technik, zertifizierte Fachleute.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hol- & Bringservice -->
+      <div class="reveal md:col-span-4">
+        <div class="p-2 rounded-[2rem] bg-espresso/[0.04] border border-espresso/10 h-full">
+          <div class="rounded-[calc(2rem-0.5rem)] bg-cream min-h-[210px]
+                      p-7 flex flex-col justify-between
+                      shadow-[inset_0_1px_1px_rgba(255,255,255,0.9)]">
+            <svg width="28" height="20" viewBox="0 0 28 20" fill="none" class="text-muted/50">
+              <path d="M2 14h24M4 14l2-6h16l2 6M6 8l1-4h8l1 4M17 8l1-4h2l1 4M2 14l1 3h3l.5-3M26 14l-1 3h-3l-.5-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="8" cy="15.5" r="2" stroke="currentColor" stroke-width="1.2"/>
+              <circle cx="20" cy="15.5" r="2" stroke="currentColor" stroke-width="1.2"/>
+            </svg>
+            <div>
+              <h3 class="font-serif text-espresso text-xl font-black mb-2">Hol- &amp; Bringservice</h3>
+              <p class="text-muted text-sm font-light leading-relaxed">
+                Wir holen Ihr Fahrzeug ab und bringen es nach der Inspektion zurück.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Marken -->
+      <div class="reveal d1 md:col-span-4">
+        <div class="p-2 rounded-[2rem] bg-espresso/[0.04] border border-espresso/10 h-full">
+          <div class="rounded-[calc(2rem-0.5rem)] bg-cream min-h-[210px]
+                      p-7 flex flex-col justify-between
+                      shadow-[inset_0_1px_1px_rgba(255,255,255,0.9)]">
+            <span class="inline-flex rounded-full border border-espresso/15
+                         px-3 py-[5px] text-[10px] uppercase tracking-[0.22em] font-medium text-muted w-fit">
+              Marken
+            </span>
+            <div class="flex flex-wrap gap-2">
+              <span class="text-[11px] font-medium px-3 py-1.5 rounded-full bg-espresso/[0.06] text-espresso">Volkswagen</span>
+              <span class="text-[11px] font-medium px-3 py-1.5 rounded-full bg-espresso/[0.06] text-espresso">Audi</span>
+              <span class="text-[11px] font-medium px-3 py-1.5 rounded-full bg-espresso/[0.06] text-espresso">Skoda</span>
+              <span class="text-[11px] font-medium px-3 py-1.5 rounded-full bg-espresso/[0.06] text-espresso">+ viele mehr</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Standort -->
+      <div class="reveal d2 md:col-span-4">
+        <div class="p-2 rounded-[2rem] bg-espresso/[0.04] border border-espresso/10 h-full">
+          <div class="rounded-[calc(2rem-0.5rem)] bg-espresso min-h-[210px]
+                      p-7 flex flex-col justify-between
+                      shadow-[inset_0_1px_1px_rgba(255,255,255,0.07)]">
+            <span class="inline-flex rounded-full border border-white/15
+                         px-3 py-[5px] text-[10px] uppercase tracking-[0.22em] font-medium text-cream/40 w-fit">
+              Standort
+            </span>
+            <div>
+              <p class="text-cream font-serif text-xl font-bold mb-1">Beckdorf</p>
+              <p class="text-cream/40 text-sm font-light leading-relaxed">
+                Steinkamp 10<br/>21643 Beckdorf<br/>bei Hamburg
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       FAHRZEUGE SHOWCASE
+  ═══════════════════════════════════════════════ -->
+  <section id="fahrzeuge" class="py-32 md:py-40 px-4 md:px-14 bg-warm">
+    <!-- Header row -->
+    <div class="reveal flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14">
+      <div>
+        <span class="inline-flex rounded-full border border-espresso/20
+                     px-3 py-[5px] text-[10px] uppercase tracking-[0.22em] font-medium text-muted mb-6 block w-fit">
+          Aktuelle Fahrzeuge
+        </span>
+        <h2 class="font-serif text-[clamp(2.4rem,5vw,5rem)] font-black leading-[1.0] tracking-tight">
+          Unsere<br/><em class="font-normal italic text-muted">Auswahl.</em>
+        </h2>
+      </div>
+      <a href="https://www.autowelt-michael.de/fahrzeuge.html" target="_blank" rel="noopener"
+         class="group inline-flex items-center gap-2
+                border hairline text-espresso text-[13px] font-medium
+                pl-5 pr-1.5 py-1.5 rounded-full self-start md:self-auto
+                transition-all duration-500 ease-spring
+                hover:bg-espresso hover:text-cream hover:border-espresso active:scale-[0.97]">
+        Alle ansehen
+        <span class="w-7 h-7 rounded-full bg-espresso/[0.06] flex items-center justify-center
+                     transition-all duration-500 ease-spring
+                     group-hover:bg-white/15 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+            <path d="M2 8L8 2M8 2H3M8 2V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </a>
+    </div>
+
+    <!-- Car grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+      <!-- Car card template: double-bezel -->
+      <div class="reveal d1 group cursor-pointer">
+        <div class="p-1.5 rounded-[2rem] bg-espresso/[0.04] border border-espresso/10 h-full
+                    transition-all duration-700 ease-spring
+                    hover:border-espresso/20 hover:shadow-[0_24px_64px_rgba(26,17,9,0.10)]">
+          <div class="rounded-[calc(2rem-0.375rem)] bg-cream overflow-hidden h-full
+                      shadow-[inset_0_1px_1px_rgba(255,255,255,0.9)]">
+            <!-- Placeholder image well -->
+            <div class="h-52 bg-gradient-to-br from-espresso/[0.04] to-muted/[0.08]
+                        flex items-center justify-center">
+              <svg width="72" height="44" viewBox="0 0 72 44" fill="none" class="text-muted/25">
+                <path d="M4 32h64M8 32l5-14h42l5 14M14 18l3-8H36M36 18l3-8h8l3 8M4 32l2 5h6l1-5M68 32l-2 5h-6l-1-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="18" cy="34" r="3.5" stroke="currentColor" stroke-width="1.3"/>
+                <circle cx="54" cy="34" r="3.5" stroke="currentColor" stroke-width="1.3"/>
+              </svg>
+            </div>
+            <div class="p-6">
+              <div class="flex items-start justify-between mb-3">
+                <div>
+                  <h4 class="font-serif text-xl font-bold text-espresso">VW Golf</h4>
+                  <p class="text-muted text-[12px] font-light mt-0.5">2019 · 68.000 km · Diesel</p>
+                </div>
+                <span class="text-[11px] font-medium px-2.5 py-1 rounded-full bg-sage/15 text-sage shrink-0">Verfügbar</span>
+              </div>
+              <p class="text-muted text-[13px] font-light leading-relaxed mb-5">
+                Gepflegter Zustand, scheckheftgepflegt, unfallfrei, TÜV neu.
+              </p>
+              <div class="flex items-center justify-between">
+                <span class="font-serif text-xl font-bold text-espresso">auf Anfrage</span>
+                <span class="w-8 h-8 rounded-full border border-espresso/15 flex items-center justify-center
+                             transition-all duration-500 ease-spring
+                             group-hover:bg-espresso group-hover:border-espresso
+                             group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" class="group-hover:text-white text-espresso transition-colors duration-300">
+                    <path d="M2 8L8 2M8 2H3M8 2V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal d2 group cursor-pointer">
+        <div class="p-1.5 rounded-[2rem] bg-espresso/[0.04] border border-espresso/10 h-full
+                    transition-all duration-700 ease-spring
+                    hover:border-espresso/20 hover:shadow-[0_24px_64px_rgba(26,17,9,0.10)]">
+          <div class="rounded-[calc(2rem-0.375rem)] bg-cream overflow-hidden h-full
+                      shadow-[inset_0_1px_1px_rgba(255,255,255,0.9)]">
+            <div class="h-52 bg-gradient-to-br from-sage/[0.06] to-muted/[0.08]
+                        flex items-center justify-center">
+              <svg width="72" height="44" viewBox="0 0 72 44" fill="none" class="text-muted/25">
+                <path d="M4 32h64M8 32l5-14h42l5 14M14 18l3-8H36M36 18l3-8h8l3 8M4 32l2 5h6l1-5M68 32l-2 5h-6l-1-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="18" cy="34" r="3.5" stroke="currentColor" stroke-width="1.3"/>
+                <circle cx="54" cy="34" r="3.5" stroke="currentColor" stroke-width="1.3"/>
+              </svg>
+            </div>
+            <div class="p-6">
+              <div class="flex items-start justify-between mb-3">
+                <div>
+                  <h4 class="font-serif text-xl font-bold text-espresso">Audi A4</h4>
+                  <p class="text-muted text-[12px] font-light mt-0.5">2020 · 52.000 km · Benzin</p>
+                </div>
+                <span class="text-[11px] font-medium px-2.5 py-1 rounded-full bg-sage/15 text-sage shrink-0">Verfügbar</span>
+              </div>
+              <p class="text-muted text-[13px] font-light leading-relaxed mb-5">
+                Vollausstattung, Schiebedach, Premium-Sound, lückenlose Servicehistorie.
+              </p>
+              <div class="flex items-center justify-between">
+                <span class="font-serif text-xl font-bold text-espresso">auf Anfrage</span>
+                <span class="w-8 h-8 rounded-full border border-espresso/15 flex items-center justify-center
+                             transition-all duration-500 ease-spring
+                             group-hover:bg-espresso group-hover:border-espresso
+                             group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" class="group-hover:text-white text-espresso transition-colors duration-300">
+                    <path d="M2 8L8 2M8 2H3M8 2V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal d3 group cursor-pointer">
+        <div class="p-1.5 rounded-[2rem] bg-espresso/[0.04] border border-espresso/10 h-full
+                    transition-all duration-700 ease-spring
+                    hover:border-espresso/20 hover:shadow-[0_24px_64px_rgba(26,17,9,0.10)]">
+          <div class="rounded-[calc(2rem-0.375rem)] bg-cream overflow-hidden h-full
+                      shadow-[inset_0_1px_1px_rgba(255,255,255,0.9)]">
+            <div class="h-52 bg-gradient-to-br from-muted/[0.05] to-espresso/[0.06]
+                        flex items-center justify-center">
+              <svg width="72" height="44" viewBox="0 0 72 44" fill="none" class="text-muted/25">
+                <path d="M4 32h64M8 32l5-14h42l5 14M14 18l3-8H36M36 18l3-8h8l3 8M4 32l2 5h6l1-5M68 32l-2 5h-6l-1-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="18" cy="34" r="3.5" stroke="currentColor" stroke-width="1.3"/>
+                <circle cx="54" cy="34" r="3.5" stroke="currentColor" stroke-width="1.3"/>
+              </svg>
+            </div>
+            <div class="p-6">
+              <div class="flex items-start justify-between mb-3">
+                <div>
+                  <h4 class="font-serif text-xl font-bold text-espresso">Skoda Octavia</h4>
+                  <p class="text-muted text-[12px] font-light mt-0.5">2021 · 41.000 km · Diesel</p>
+                </div>
+                <span class="text-[11px] font-medium px-2.5 py-1 rounded-full bg-sage/15 text-sage shrink-0">Verfügbar</span>
+              </div>
+              <p class="text-muted text-[13px] font-light leading-relaxed mb-5">
+                Kombi, Navi, Klimaautomatik, Scheckheft lückenlos, unfallfrei.
+              </p>
+              <div class="flex items-center justify-between">
+                <span class="font-serif text-xl font-bold text-espresso">auf Anfrage</span>
+                <span class="w-8 h-8 rounded-full border border-espresso/15 flex items-center justify-center
+                             transition-all duration-500 ease-spring
+                             group-hover:bg-espresso group-hover:border-espresso
+                             group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" class="group-hover:text-white text-espresso transition-colors duration-300">
+                    <path d="M2 8L8 2M8 2H3M8 2V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       CONTACT — DARK SECTION
+  ═══════════════════════════════════════════════ -->
+  <section id="kontakt" class="py-32 md:py-40 px-4 md:px-14 bg-espresso relative overflow-hidden">
+    <!-- Ambient glow -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                w-[700px] h-[700px] rounded-full bg-muted/[0.08] blur-[140px] pointer-events-none"></div>
+
+    <div class="relative max-w-4xl mx-auto">
+      <div class="reveal text-center mb-14">
+        <span class="inline-flex rounded-full border border-white/15
+                     px-3 py-[5px] text-[10px] uppercase tracking-[0.22em] font-medium text-cream/40 mb-8">
+          Kontakt aufnehmen
+        </span>
+        <h2 class="font-serif text-[clamp(2.8rem,6vw,6rem)] font-black text-cream
+                   leading-[0.95] tracking-tight">
+          Wir sind<br/><em class="font-normal italic text-cream/45">für Sie da.</em>
+        </h2>
+        <p class="text-cream/35 text-lg font-light leading-relaxed mt-6 max-w-md mx-auto">
+          Fragen zu Fahrzeugen, Ankauf oder Werkstatt? Sprechen Sie uns direkt an.
+        </p>
+      </div>
+
+      <!-- Contact cards -->
+      <div class="reveal d1 grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+
+        <!-- Phone -->
+        <div class="p-2 rounded-[2rem] bg-white/[0.04] border border-white/10">
+          <div class="rounded-[calc(2rem-0.5rem)] bg-white/[0.04] p-7
+                      shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] flex flex-col gap-3">
+            <div class="text-cream/30 text-[10px] uppercase tracking-[0.22em]">Telefon</div>
+            <a href="tel:+4941676996339"
+               class="text-cream font-serif text-lg font-bold leading-snug
+                      hover:text-cream/75 transition-colors duration-300">
+              +49 4167<br/>699 6339
+            </a>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="p-2 rounded-[2rem] bg-white/[0.04] border border-white/10">
+          <div class="rounded-[calc(2rem-0.5rem)] bg-white/[0.04] p-7
+                      shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] flex flex-col gap-3">
+            <div class="text-cream/30 text-[10px] uppercase tracking-[0.22em]">E-Mail</div>
+            <a href="mailto:verkauf@autowelt-michael.de"
+               class="text-cream font-serif text-lg font-bold leading-snug break-all
+                      hover:text-cream/75 transition-colors duration-300">
+              verkauf@<br/>autowelt-michael.de
+            </a>
+          </div>
+        </div>
+
+        <!-- Hours -->
+        <div class="p-2 rounded-[2rem] bg-white/[0.04] border border-white/10">
+          <div class="rounded-[calc(2rem-0.5rem)] bg-white/[0.04] p-7
+                      shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] flex flex-col gap-3">
+            <div class="text-cream/30 text-[10px] uppercase tracking-[0.22em]">Öffnungszeiten</div>
+            <div class="space-y-1">
+              <p class="text-cream text-sm font-medium">Mo – Fr: 09:00 – 18:00</p>
+              <p class="text-cream text-sm font-medium">Sa: 09:00 – 15:00</p>
+              <p class="text-cream/35 text-sm font-light">So: Geschlossen</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Primary CTA -->
+      <div class="reveal d2 flex justify-center">
+        <a href="mailto:verkauf@autowelt-michael.de"
+           class="group inline-flex items-center gap-2
+                  bg-cream text-espresso text-[13px] font-semibold
+                  pl-6 pr-1.5 py-1.5 rounded-full
+                  transition-all duration-500 ease-spring
+                  hover:bg-white active:scale-[0.97]">
+          Nachricht senden
+          <span class="w-8 h-8 rounded-full bg-espresso/10 flex items-center justify-center
+                       transition-all duration-500 ease-spring
+                       group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:scale-110">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+              <path d="M2 9L9 2M9 2H3.5M9 2V7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════════ -->
+  <footer class="bg-espresso border-t border-white/[0.06] px-4 md:px-14 py-8">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-cream/25 text-[12px] font-light">
+      <p class="font-serif font-semibold text-cream/40">Autowelt Michael &amp; Partner</p>
+      <p>Steinkamp 10 · 21643 Beckdorf · Deutschland</p>
+      <div class="flex gap-5">
+        <a href="#" class="hover:text-cream/60 transition-colors duration-300">Impressum</a>
+        <a href="#" class="hover:text-cream/60 transition-colors duration-300">Datenschutz</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════════
+       JAVASCRIPT
+  ═══════════════════════════════════════════════ -->
+  <script>
+    // ── Hamburger / Mobile menu ──────────────────────
+    const hamburger    = document.getElementById('hamburger');
+    const mobileOverlay = document.getElementById('mobile-overlay');
+    const barTop       = document.getElementById('bar-top');
+    const barBottom    = document.getElementById('bar-bottom');
+    let isOpen = false;
+
+    function openMenu() {
+      isOpen = true;
+      mobileOverlay.classList.remove('opacity-0', 'pointer-events-none');
+      mobileOverlay.classList.add('opacity-100', 'menu-open');
+      barTop.style.transform    = 'translateY(5px) rotate(45deg)';
+      barBottom.style.transform = 'translateY(-5px) rotate(-45deg)';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenu() {
+      isOpen = false;
+      mobileOverlay.classList.add('opacity-0', 'pointer-events-none');
+      mobileOverlay.classList.remove('opacity-100', 'menu-open');
+      barTop.style.transform    = '';
+      barBottom.style.transform = '';
+      document.body.style.overflow = '';
+    }
+
+    hamburger.addEventListener('click', () => isOpen ? closeMenu() : openMenu());
+
+    // ── IntersectionObserver — scroll reveals ────────
+    // Uses transform + opacity only (GPU-safe, no layout triggers)
+    const revealEls = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -48px 0px' });
+
+    revealEls.forEach(el => io.observe(el));
+  </script>
+</body>
+</html>

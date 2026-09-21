@@ -20,7 +20,7 @@ der Multiplikator `c` schrittweise aus den Trainingsdaten.
 ## Ausführen
 
 ```bash
-pip install jupyter pandas matplotlib numpy
+pip install -r requirements.txt
 jupyter notebook Klassifikator.ipynb
 ```
 
